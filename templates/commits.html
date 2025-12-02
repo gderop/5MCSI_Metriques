@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Commits par minute</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  </head>
+  <body>
+    <h2>Nombre de commits par minute (repo OpenRSI/5MCSI_Metriques)</h2>
+    <div id="commits_chart" style="width: 900px; height: 500px;"></div>
+
+    <script>
+      google.charts.load('current', { packages: ['corechart'] });
+      google.charts.setOnLoadCallback(drawCommitsChart);
+
+      function drawCommitsChart() {
+        function drawChart(data) {
+          var dataTable = new google.visualization.DataTable();
+          dataTable.addColumn('string', 'Minute');
+          dataTable.addColumn('number', 'Commits');
+
+          data.results.forEach(entry => {
+            dataTable.addRow([entry.minute.toString(), entry.count]);
+          });
+
+          var options = {
+            title: 'Commits par minute sur le projet 5MCSI_Metriques',
+            hAxis: { title: 'Minute (0-59)' },
+            vAxis: { title: 'Nombre de commits' },
+            legend: { position: 'none' }
+          };
+
+          var chart = new google.visualization.ColumnChart(
+            document.getElementById('commits_chart')
+          );
+          chart.draw(dataTable, options);
+        }
+
+        // On récupère les données depuis notre API Flask /commits_data/
+        fetch('/commits_data/')
+          .then(response => response.json())
+          .then(data => {
+            drawChart(data);
+          });
+      }
+    </script>
+  </body>
+</html>
