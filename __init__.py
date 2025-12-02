@@ -14,6 +14,29 @@ def hello_world():
 @app.route("/contact/")
 def MaPremiereAPI():
     return "<h2>Ma page de contact</h2>"
+
+@app.route('/tawarano/')
+def meteo():
+    # Appel de l'API exemple OpenWeatherMap
+    response = urlopen('https://samples.openweathermap.org/data/2.5/forecast?lat=0&lon=0&appid=xxx')
+    raw_content = response.read()
+    json_content = json.loads(raw_content.decode('utf-8'))
+
+    results = []
+
+    # Parcourir la liste des relevés météo
+    for list_element in json_content.get('list', []):
+        dt_value = list_element.get('dt')  # timestamp du relevé
+        temp_value = list_element.get('main', {}).get('temp')  # température en Kelvin
+
+        if temp_value is not None:
+            temp_day_value = temp_value - 273.15  # conversion Kelvin → °C
+            results.append({
+                'Jour': dt_value,
+                'temp': temp_day_value
+            })
+
+    return jsonify(results=results)
   
 if __name__ == "__main__":
   app.run(debug=True)
