@@ -37,6 +37,10 @@ def meteo():
             })
 
     return jsonify(results=results)
+
+@app.route("/rapport/")
+def mongraphique():
+    return render_template("graphique.html")
   
 if __name__ == "__main__":
   app.run(debug=True)
